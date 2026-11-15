@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Gold Evaluator" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#091326" />
+  <title>Saudi Gold Price Evaluator</title>
+  <link id="appleTouchIcon" rel="apple-touch-icon" />
+  <link id="appManifest" rel="manifest" />
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS & RESET (iPhone Safari & Chrome iOS Optimized)
+       ========================================================================== */
+    :root {
+      --navy-950: #091326;
+      --navy-900: #0f1e3a;
+      --navy-800: #182d54;
+      --navy-700: #233f73;
+      --gold-600: #b47b16;
+      --gold-500: #d49b27;
+      --gold-400: #eab949;
+      --gold-50:  #fefbf2;
+
+      --bg-page: #f2f4f8;
+      --bg-card: #ffffff;
+      --bg-subtle: #f8fafc;
+      --bg-input: #eef5ff;
+      --border-input: #93c5fd;
+      --text-input: #1e3a8a;
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+
+      --good-bg: #ecfdf5;
+      --good-border: #10b981;
+      --good-text: #065f46;
+      --good-badge: #059669;
+
+      --fair-bg: #fffbeb;
+      --fair-border: #f59e0b;
+      --fair-text: #92400e;
+      --fair-badge: #d97706;
+
+      --over-bg: #fef2f2;
+      --over-border: #ef4444;
+      --over-text: #991b1b;
+      --over-badge: #dc2626;
+
+      --radius-lg: 14px;
+      --radius-md: 11px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.4;
+      padding-bottom: calc(28px + env(safe-area-inset-bottom));
+    }
+
+    /* ==========================================================================
+       SLIM COMPACT HEADER (< 48px content height + iOS safe-area-inset-top)
+       ========================================================================== */
+    .app-header {
+      background: linear-gradient(135deg, var(--navy-950) 0%, var(--navy-800) 100%);
+      color: #ffffff;
+      padding-top: env(safe-area-inset-top);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 2px 10px rgba(9, 19, 38, 0.2);
+    }
+
+    .header-bar {
+      max-width: 680px;
+      margin: 0 auto;
+      height: 44px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-dot-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy-950);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 0.96rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .saved-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #a7f3d0;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 2px 8px;
+      border-radius: 999px;
+      transition: opacity 0.2s ease;
+    }
+
+    .saved-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #34d399;
+    }
+
+    /* ==========================================================================
+       MAIN CONTAINER & CARDS
+       ========================================================================== */
+    .container {
+      max-width: 680px;
+      margin: 12px auto 0;
+      padding: 0 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 11px 14px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-badge {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: var(--navy-900);
+      color: var(--gold-400);
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .card-body {
+      padding: 14px;
+    }
+
+    /* ==========================================================================
+       INPUTS (>= 16px font-size prevents iOS Safari/Chrome auto-zoom on focus)
+       ========================================================================== */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 11px;
+      font-size: 16px; /* Prevents iOS auto-zoom */
+      font-weight: 700;
+      color: var(--text-input);
+      background-color: var(--bg-input);
+      border: 1.5px solid var(--border-input);
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-variant-numeric: tabular-nums;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="text"] {
+      font-weight: 600;
+    }
+
+    input:focus {
+      border-color: var(--navy-700);
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(35, 63, 115, 0.12);
+    }
+
+    .input-unit {
+      position: absolute;
+      right: 10px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #3b82f6;
+      pointer-events: none;
+    }
+
+    .has-unit input {
+      padding-right: 46px;
+    }
+
+    .pill-group {
+      display: flex;
+      gap: 5px;
+    }
+
+    .pill-btn {
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .pill-btn.active {
+      background: var(--navy-900);
+      color: var(--gold-400);
+      border-color: var(--navy-900);
+    }
+
+    /* Karat Segmented Selector */
+    .karat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+    }
+
+    .karat-btn {
+      padding: 9px 4px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-subtle);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.12s ease;
+    }
+
+    .karat-btn .k-name {
+      display: block;
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: var(--navy-900);
+    }
+
+    .karat-btn .k-purity {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .karat-btn.active {
+      background: var(--gold-50);
+      border-color: var(--gold-500);
+      box-shadow: 0 2px 6px rgba(212, 155, 39, 0.18);
+    }
+
+    .karat-btn.active .k-name {
+      color: var(--gold-600);
+    }
+
+    .karat-btn.active .k-purity {
+      color: var(--navy-900);
+    }
+
+    /* Benchmark Summary Strip */
+    .bench-strip {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .metric-box {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 9px 11px;
+    }
+
+    .metric-box.highlight-gold {
+      background: var(--gold-50);
+      border-color: #f3d796;
+    }
+
+    .metric-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .metric-val {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-sub {
+      font-size: 0.67rem;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+
+    /* ==========================================================================
+       DECISION VERDICT BANNER
+       ========================================================================== */
+    .verdict-card {
+      margin-top: 12px;
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      border: 2px solid var(--good-border);
+      background: var(--good-bg);
+    }
+
+    .verdict-card.good {
+      background: var(--good-bg);
+      border-color: var(--good-border);
+      color: var(--good-text);
+    }
+
+    .verdict-card.fair {
+      background: var(--fair-bg);
+      border-color: var(--fair-border);
+      color: var(--fair-text);
+    }
+
+    .verdict-card.overpriced {
+      background: var(--over-bg);
+      border-color: var(--over-border);
+      color: var(--over-text);
+    }
+
+    .verdict-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .verdict-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .good .verdict-badge { background: var(--good-badge); }
+    .fair .verdict-badge { background: var(--fair-badge); }
+    .overpriced .verdict-badge { background: var(--over-badge); }
+
+    .verdict-rate {
+      font-size: 1.35rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .verdict-desc {
+      margin-top: 8px;
+      font-size: 0.81rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .negotiation-tip {
+      margin-top: 9px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(0, 0, 0, 0.15);
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    /* Breakdown Receipt List */
+    .breakdown-list {
+      margin-top: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 11px;
+      font-size: 0.8rem;
+      border-bottom: 1px solid var(--border-color);
+      background: #ffffff;
+    }
+
+    .breakdown-row:last-child {
+      border-bottom: none;
+    }
+
+    .breakdown-row.alt {
+      background: var(--bg-subtle);
+    }
+
+    .breakdown-row.bold {
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .breakdown-val {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: var(--navy-900);
+      color: #ffffff;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .btn-primary:active {
+      opacity: 0.9;
+    }
+
+    .btn-ghost-danger {
+      background: transparent;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 4px 9px;
+      border-radius: 7px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       SAVED QUOTES COMPARISON LIST
+       ========================================================================== */
+    .saved-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .saved-item {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      background: var(--bg-subtle);
+    }
+
+    .saved-item.best-deal {
+      border-color: var(--good-border);
+      background: #f6fef9;
+    }
+
+    .saved-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .saved-shop-name {
+      font-weight: 700;
+      font-size: 0.86rem;
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .best-badge {
+      background: var(--navy-900);
+      color: var(--gold-400);
+      font-size: 0.64rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .saved-meta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .mini-tag {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .mini-tag.good { background: var(--good-badge); }
+    .mini-tag.fair { background: var(--fair-badge); }
+    .mini-tag.overpriced { background: var(--over-badge); }
+
+    .saved-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.73rem;
+      color: var(--text-secondary);
+      margin-top: 7px;
+      padding-top: 6px;
+      border-top: 1px solid var(--border-color);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-del-item {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 2px 5px;
+      font-size: 0.9rem;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(90px);
+      background: var(--navy-950);
+      color: #ffffff;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      z-index: 100;
+      opacity: 0;
+      transition: transform 0.22s ease, opacity 0.22s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SLIM COMPACT HEADER -->
+  <header class="app-header">
+    <div class="header-bar">
+      <div class="brand">
+        <div class="brand-dot-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="6 7 18 7 21 17 3 17 6 7"></polygon>
+          </svg>
+        </div>
+        <span class="brand-title">Saudi Gold Evaluator</span>
+      </div>
+
+      <div class="saved-status" id="savedStatusBadge" aria-live="polite">
+        <span class="saved-dot"></span>
+        <span id="savedStatusText">Saved</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1. MARKET & TAX SETTINGS -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="step-badge">1</span>
+          <h2 class="card-title">Market &amp; Tax Settings</h2>
+        </div>
+        <div class="pill-group">
+          <button type="button" class="pill-btn active" id="pillVat15" data-vat="15">15% VAT</button>
+          <button type="button" class="pill-btn" id="pillVat0" data-vat="0">0% Bullion</button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="field">
+            <label for="spotUsdOz">24K Spot Price ($ / oz)</label>
+            <div class="input-wrap has-unit">
+              <input type="number" id="spotUsdOz" step="0.01" min="0" value="3950.00" inputmode="decimal" />
+              <span class="input-unit">$/oz</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="exchangeRate">USD to SAR Rate</label>
+            <div class="input-wrap has-unit">
+              <input type="number" id="exchangeRate" step="0.0001" min="0.1" value="3.75" inputmode="decimal" />
+              <span class="input-unit">SAR</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
+          <div class="field">
+            <label for="vatRate">VAT Rate (%)</label>
+            <div class="input-wrap has-unit">
+              <input type="number" id="vatRate" step="0.1" min="0" max="100" value="15" inputmode="decimal" />
+              <span class="input-unit">%</span>
+            </div>
+          </div>
+
+          <div class="grid-2" style="gap: 6px;">
+            <div class="field">
+              <label for="goodMaxPct">Good Max %</label>
+              <div class="input-wrap has-unit">
+                <input type="number" id="goodMaxPct" step="0.5" min="0" max="100" value="8" inputmode="decimal" />
+                <span class="input-unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="fairMaxPct">Fair Max %</label>
+              <div class="input-wrap has-unit">
+                <input type="number" id="fairMaxPct" step="0.5" min="0" max="100" value="14" inputmode="decimal" />
+                <span class="input-unit">%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bench-strip">
+          <div class="metric-box highlight-gold">
+            <div class="metric-label">Global 24K Base / g</div>
+            <div class="metric-val" id="outGlobal24kSar">476.23 SAR</div>
+            <div class="metric-sub">31.1035 g / troy oz</div>
+          </div>
+
+          <div class="metric-box highlight-gold">
+            <div class="metric-label" id="lblKaratBench">Selected 21K Base / g</div>
+            <div class="metric-val" id="outKaratBaseSar">416.70 SAR</div>
+            <div class="metric-sub" id="subKaratPurity">87.50% purity (Excl. VAT)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. KARAT & PLANNED PURCHASE -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="step-badge">2</span>
+          <h2 class="card-title">Karat &amp; Planned Purchase</h2>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="karat-grid" id="karatSelector">
+          <button type="button" class="karat-btn" data-karat="24" data-purity="1">
+            <span class="k-name">24K</span>
+            <span class="k-purity">100.0%</span>
+          </button>
+          <button type="button" class="karat-btn" data-karat="22" data-purity="0.91666667">
+            <span class="k-name">22K</span>
+            <span class="k-purity">91.67%</span>
+          </button>
+          <button type="button" class="karat-btn active" data-karat="21" data-purity="0.875">
+            <span class="k-name">21K</span>
+            <span class="k-purity">87.50%</span>
+          </button>
+          <button type="button" class="karat-btn" data-karat="18" data-purity="0.75">
+            <span class="k-name">18K</span>
+            <span class="k-purity">75.00%</span>
+          </button>
+        </div>
+
+        <div class="field" style="margin-top: 10px;">
+          <label for="desiredGrams">Desired Gold Weight (Grams)</label>
+          <div class="input-wrap has-unit">
+            <input type="number" id="desiredGrams" step="0.01" min="0.01" value="15.50" inputmode="decimal" />
+            <span class="input-unit">g</span>
+          </div>
+        </div>
+
+        <div class="bench-strip">
+          <div class="metric-box">
+            <div class="metric-label">Raw Gold (Excl. VAT)</div>
+            <div class="metric-val" id="outPlannedExclVat">6,458.89 SAR</div>
+            <div class="metric-sub" id="outPlannedWeightSub">15.50g pure metal</div>
+          </div>
+
+          <div class="metric-box">
+            <div class="metric-label">Raw Gold (Incl. VAT)</div>
+            <div class="metric-val" id="outPlannedInclVat">7,427.72 SAR</div>
+            <div class="metric-sub">0% manufacturing floor</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SHOP QUOTE & DECISION EVALUATION -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="step-badge">3</span>
+          <h2 class="card-title">Shop Quote &amp; Decision</h2>
+        </div>
+        <button type="button" class="pill-btn" id="btnSyncWeight">Sync Weight</button>
+      </div>
+
+      <div class="card-body">
+        <div class="field" style="margin-bottom: 10px;">
+          <label for="shopName">Shop / Piece Name (Optional)</label>
+          <input type="text" id="shopName" placeholder="e.g. Souq Al-Hob - 21K Bangle" />
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="shopTotalPrice">Shop Total (Incl. VAT)</label>
+            <div class="input-wrap has-unit">
+              <input type="number" id="shopTotalPrice" step="0.01" min="0" value="7980.00" inputmode="decimal" />
+              <span class="input-unit">SAR</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="shopWeight">Piece Weight (Grams)</label>
+            <div class="input-wrap has-unit">
+              <input type="number" id="shopWeight" step="0.01" min="0.01" value="15.50" inputmode="decimal" />
+              <span class="input-unit">g</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLOR-CODED VERDICT BANNER -->
+        <div class="verdict-card good" id="verdictCard">
+          <div class="verdict-top">
+            <span class="verdict-badge" id="verdictBadge">GOOD PRICE</span>
+            <span class="verdict-rate" id="verdictRate">+7.44%</span>
+          </div>
+          <p class="verdict-desc" id="verdictDesc"></p>
+          <div class="negotiation-tip" id="negotiationBox">
+            <span id="negotiationText">Max Good Receipt:</span>
+            <strong id="negotiationTarget">-- SAR</strong>
+          </div>
+        </div>
+
+        <!-- PRICE & VAT BREAKDOWN -->
+        <div class="breakdown-list">
+          <div class="breakdown-row">
+            <span>Shop Gross / g (Incl. VAT)</span>
+            <span class="breakdown-val" id="bdGrossPerGram">514.84 SAR/g</span>
+          </div>
+          <div class="breakdown-row alt">
+            <span id="bdVatLabel">VAT Extracted / g (15.0%)</span>
+            <span class="breakdown-val" id="bdVatPerGram">-67.15 SAR/g</span>
+          </div>
+          <div class="breakdown-row bold">
+            <span>Shop Net / g (Excl. VAT)</span>
+            <span class="breakdown-val" id="bdNetPerGram">447.69 SAR/g</span>
+          </div>
+          <div class="breakdown-row alt">
+            <span id="bdGlobalLabel">Global 21K Base / g</span>
+            <span class="breakdown-val" id="bdGlobalPerGram">416.70 SAR/g</span>
+          </div>
+          <div class="breakdown-row bold">
+            <span>Manufacturing Charge / g</span>
+            <span class="breakdown-val" id="bdMfgPerGram">+30.98 SAR/g</span>
+          </div>
+          <div class="breakdown-row alt">
+            <span>Total Manufacturing Fee (Piece)</span>
+            <span class="breakdown-val" id="bdTotalMfg">480.24 SAR</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary" id="btnSaveQuote">
+          <span>+ Save Quote to Compare</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. SAVED SHOP QUOTES COMPARISON -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="step-badge">4</span>
+          <h2 class="card-title">Saved Shop Quotes (<span id="savedCount">0</span>)</h2>
+        </div>
+        <button type="button" class="btn-ghost-danger" id="btnClearQuotes">Clear</button>
+      </div>
+
+      <div class="card-body">
+        <div class="saved-list" id="savedQuotesList"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="toast" id="toastMsg" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      // ======================================================================
+      // CONSTANTS & DEFAULT STATE (Saudi Market Calibrated: <8% Good, <=14% Fair)
+      // ======================================================================
+      const TROY_OZ_TO_GRAMS = 31.1035;
+      const STORAGE_KEY = "ksa_gold_ios_app_v2";
+      const DB_NAME = "KsaGoldEvaluatorDB";
+      const DB_STORE = "appStateStore";
+
+      const KARATS = [
+        { k: 24, label: "24K", purity: 1.0, pctText: "100.0%" },
+        { k: 22, label: "22K", purity: 22 / 24, pctText: "91.67%" },
+        { k: 21, label: "21K", purity: 21 / 24, pctText: "87.50%" },
+        { k: 18, label: "18K", purity: 18 / 24, pctText: "75.00%" }
+      ];
+
+      let state = {
+        spotUsdOz: 3950.00,
+        exchangeRate: 3.75,
+        vatRate: 15.0,
+        goodMaxPct: 8.0,
+        fairMaxPct: 14.0,
+        selectedKarat: 21,
+        desiredGrams: 15.50,
+        shopName: "",
+        shopTotalPrice: 7980.00,
+        shopWeight: 15.50
+      };
+
+      let savedQuotes = [];
+      let lastComputed = null;
+      let hashSyncTimer = null;
+
+      // ======================================================================
+      // DYNAMIC APPLE TOUCH ICON & MANIFEST (iOS Home Screen Ready)
+      // ======================================================================
+      function setupAppleWebAppAssets() {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = 180;
+          canvas.height = 180;
+          const ctx = canvas.getContext("2d");
+
+          // Deep Navy Background
+          ctx.fillStyle = "#091326";
+          ctx.fillRect(0, 0, 180, 180);
+
+          // Gold Coin Circle
+          const grad = ctx.createLinearGradient(30, 30, 150, 150);
+          grad.addColorStop(0, "#f5d061");
+          grad.addColorStop(1, "#b47b16");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(90, 90, 62, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Inner Ring & Text
+          ctx.strokeStyle = "#091326";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.arc(90, 90, 50, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = "#091326";
+          ctx.font = "bold 34px -apple-system, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("24K", 90, 92);
+
+          const iconDataUrl = canvas.toDataURL("image/png");
+          const iconLink = document.getElementById("appleTouchIcon");
+          if (iconLink) iconLink.href = iconDataUrl;
+
+          const manifest = {
+            name: "Saudi Gold Price Evaluator",
+            short_name: "Gold Evaluator",
+            start_url: ".",
+            display: "standalone",
+            background_color: "#091326",
+            theme_color: "#091326",
+            icons: [{ src: iconDataUrl, sizes: "180x180", type: "image/png" }]
+          };
+          const manifestBlob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+          const manifestLink = document.getElementById("appManifest");
+          if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
+        } catch (e) {
+          // Safe fallback if canvas/blob restricted
+        }
+      }
+
+      // ======================================================================
+      // DOM REFERENCES
+      // ======================================================================
+      const el = {
+        savedStatusText: document.getElementById("savedStatusText"),
+        spotUsdOz: document.getElementById("spotUsdOz"),
+        exchangeRate: document.getElementById("exchangeRate"),
+        vatRate: document.getElementById("vatRate"),
+        goodMaxPct: document.getElementById("goodMaxPct"),
+        fairMaxPct: document.getElementById("fairMaxPct"),
+        pillVat15: document.getElementById("pillVat15"),
+        pillVat0: document.getElementById("pillVat0"),
+        karatSelector: document.getElementById("karatSelector"),
+        desiredGrams: document.getElementById("desiredGrams"),
+        shopName: document.getElementById("shopName"),
+        shopTotalPrice: document.getElementById("shopTotalPrice"),
+        shopWeight: document.getElementById("shopWeight"),
+        btnSyncWeight: document.getElementById("btnSyncWeight"),
+        btnSaveQuote: document.getElementById("btnSaveQuote"),
+        btnClearQuotes: document.getElementById("btnClearQuotes"),
+
+        outGlobal24kSar: document.getElementById("outGlobal24kSar"),
+        lblKaratBench: document.getElementById("lblKaratBench"),
+        outKaratBaseSar: document.getElementById("outKaratBaseSar"),
+        subKaratPurity: document.getElementById("subKaratPurity"),
+        outPlannedExclVat: document.getElementById("outPlannedExclVat"),
+        outPlannedWeightSub: document.getElementById("outPlannedWeightSub"),
+        outPlannedInclVat: document.getElementById("outPlannedInclVat"),
+
+        verdictCard: document.getElementById("verdictCard"),
+        verdictBadge: document.getElementById("verdictBadge"),
+        verdictRate: document.getElementById("verdictRate"),
+        verdictDesc: document.getElementById("verdictDesc"),
+        negotiationBox: document.getElementById("negotiationBox"),
+        negotiationText: document.getElementById("negotiationText"),
+        negotiationTarget: document.getElementById("negotiationTarget"),
+
+        bdGrossPerGram: document.getElementById("bdGrossPerGram"),
+        bdVatLabel: document.getElementById("bdVatLabel"),
+        bdVatPerGram: document.getElementById("bdVatPerGram"),
+        bdNetPerGram: document.getElementById("bdNetPerGram"),
+        bdGlobalLabel: document.getElementById("bdGlobalLabel"),
+        bdGlobalPerGram: document.getElementById("bdGlobalPerGram"),
+        bdMfgPerGram: document.getElementById("bdMfgPerGram"),
+        bdTotalMfg: document.getElementById("bdTotalMfg"),
+
+        savedCount: document.getElementById("savedCount"),
+        savedQuotesList: document.getElementById("savedQuotesList"),
+        toastMsg: document.getElementById("toastMsg")
+      };
+
+      // ======================================================================
+      // FORMATTERS
+      // ======================================================================
+      function fmtSar(val, decimals = 2) {
+        if (!isFinite(val)) return "0.00 SAR";
+        return val.toLocaleString("en-US", {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals
+        }) + " SAR";
+      }
+
+      function fmtNum(val, decimals = 2) {
+        if (!isFinite(val)) return "0.00";
+        return val.toLocaleString("en-US", {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals
+        });
+      }
+
+      let toastTimer = null;
+      function showToast(msg) {
+        el.toastMsg.textContent = msg;
+        el.toastMsg.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          el.toastMsg.classList.remove("show");
+        }, 2200);
+      }
+
+      function flashSavedIndicator() {
+        el.savedStatusText.textContent = "Saving...";
+        clearTimeout(flashSavedIndicator._t);
+        flashSavedIndicator._t = setTimeout(() => {
+          el.savedStatusText.textContent = "Saved";
+        }, 350);
+      }
+
+      // ======================================================================
+      // TRIPLE-LAYER PERSISTENCE (localStorage + IndexedDB + URL Hash)
+      // Guarantees persistence across iOS Safari, Chrome iOS & Home Screen clips
+      // ======================================================================
+      function openIndexedDB() {
+        return new Promise((resolve, reject) => {
+          if (!window.indexedDB) return reject("No IDB");
+          const req = indexedDB.open(DB_NAME, 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(DB_STORE)) {
+              db.createObjectStore(DB_STORE);
+            }
+          };
+          req.onsuccess = (e) => resolve(e.target.result);
+          req.onerror = (e) => reject(e.target.error);
+        });
+      }
+
+      async function writeToIndexedDB(payload) {
+        try {
+          const db = await openIndexedDB();
+          const tx = db.transaction(DB_STORE, "readwrite");
+          tx.objectStore(DB_STORE).put(payload, STORAGE_KEY);
+        } catch (err) {
+          // Fallback handled by localStorage and URL hash
+        }
+      }
+
+      async function readFromIndexedDB() {
+        try {
+          const db = await openIndexedDB();
+          return await new Promise((resolve) => {
+            const tx = db.transaction(DB_STORE, "readonly");
+            const req = tx.objectStore(DB_STORE).get(STORAGE_KEY);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => resolve(null);
+          });
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function encodeHashState(payload) {
+        try {
+          const json = JSON.stringify(payload);
+          const b64 = btoa(unescape(encodeURIComponent(json)));
+          history.replaceState(null, "", "#s=" + b64);
+        } catch (err) {
+          // Ignore hash update errors
+        }
+      }
+
+      function decodeHashState() {
+        try {
+          const hash = window.location.hash || "";
+          if (!hash.startsWith("#s=")) return null;
+          const b64 = hash.slice(3);
+          const json = decodeURIComponent(escape(atob(b64)));
+          return JSON.parse(json);
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function persistAll() {
+        flashSavedIndicator();
+        const payload = {
+          state,
+          savedQuotes,
+          updatedAt: Date.now()
+        };
+
+        // Layer 1: localStorage
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (err) {}
+
+        // Layer 2: IndexedDB
+        writeToIndexedDB(payload);
+
+        // Layer 3: Debounced URL Hash (persists in iOS Home Screen Web Clips)
+        clearTimeout(hashSyncTimer);
+        hashSyncTimer = setTimeout(() => {
+          encodeHashState(payload);
+        }, 250);
+      }
+
+      function applyPayloadToUI(payload) {
+        if (!payload) return;
+        if (payload.state) {
+          state = { ...state, ...payload.state };
+        }
+        if (Array.isArray(payload.savedQuotes)) {
+          savedQuotes = payload.savedQuotes;
+        }
+
+        el.spotUsdOz.value = state.spotUsdOz;
+        el.exchangeRate.value = state.exchangeRate;
+        el.vatRate.value = state.vatRate;
+        el.goodMaxPct.value = state.goodMaxPct;
+        el.fairMaxPct.value = state.fairMaxPct;
+        el.desiredGrams.value = state.desiredGrams;
+        el.shopName.value = state.shopName || "";
+        el.shopTotalPrice.value = state.shopTotalPrice;
+        el.shopWeight.value = state.shopWeight;
+
+        updateKaratButtonsUI();
+        updateVatPillsUI();
+      }
+
+      async function restoreAll() {
+        let localData = null;
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) localData = JSON.parse(raw);
+        } catch (err) {}
+
+        const idbData = await readFromIndexedDB();
+        const hashData = decodeHashState();
+
+        // Pick whichever source has the most recent timestamp
+        const candidates = [localData, idbData, hashData].filter(Boolean);
+        if (candidates.length > 0) {
+          candidates.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+          applyPayloadToUI(candidates[0]);
+        }
+      }
+
+      // ======================================================================
+      // CORE CALCULATIONS
+      // ======================================================================
+      function recalculate(shouldSave = true) {
+        const spotUsdOz = Math.max(0, parseFloat(el.spotUsdOz.value) || 0);
+        const exchangeRate = Math.max(0, parseFloat(el.exchangeRate.value) || 0);
+        const vatRate = Math.max(0, parseFloat(el.vatRate.value) || 0);
+        const goodMaxPct = Math.max(0, parseFloat(el.goodMaxPct.value) || 0);
+        const fairMaxPct = Math.max(goodMaxPct, parseFloat(el.fairMaxPct.value) || 0);
+        const vatFactor = 1 + vatRate / 100;
+
+        const desiredGrams = Math.max(0, parseFloat(el.desiredGrams.value) || 0);
+        const shopTotalPrice = Math.max(0, parseFloat(el.shopTotalPrice.value) || 0);
+        const shopWeight = Math.max(0, parseFloat(el.shopWeight.value) || 0);
+
+        state.spotUsdOz = spotUsdOz;
+        state.exchangeRate = exchangeRate;
+        state.vatRate = vatRate;
+        state.goodMaxPct = goodMaxPct;
+        state.fairMaxPct = fairMaxPct;
+        state.desiredGrams = desiredGrams;
+        state.shopName = el.shopName.value.trim();
+        state.shopTotalPrice = shopTotalPrice;
+        state.shopWeight = shopWeight;
+
+        if (shouldSave) {
+          persistAll();
+        }
+
+        // 1. Global 24K & Selected Karat Base
+        const global24kUsdPerGram = spotUsdOz / TROY_OZ_TO_GRAMS;
+        const global24kSarPerGram = global24kUsdPerGram * exchangeRate;
+
+        const karatObj = KARATS.find((item) => item.k === state.selectedKarat) || KARATS[2];
+        const karatBaseSarPerGram = global24kSarPerGram * karatObj.purity;
+        const plannedRawExclVat = karatBaseSarPerGram * desiredGrams;
+        const plannedRawInclVat = plannedRawExclVat * vatFactor;
+
+        // 2. Shop Quote & VAT Extraction
+        const shopGrossPerGram = shopWeight > 0 ? shopTotalPrice / shopWeight : 0;
+        const shopNetPerGram = vatFactor > 0 ? shopGrossPerGram / vatFactor : shopGrossPerGram;
+        const extractedVatPerGram = shopGrossPerGram - shopNetPerGram;
+
+        const mfgChargePerGram = shopNetPerGram - karatBaseSarPerGram;
+        const totalMfgPiece = mfgChargePerGram * shopWeight;
+        const mfgRatePct = karatBaseSarPerGram > 0
+          ? ((shopNetPerGram - karatBaseSarPerGram) / karatBaseSarPerGram) * 100
+          : 0;
+
+        // Target Max Receipt for Good Price (just under goodMaxPct)
+        const targetGoodMultiplier = 1 + Math.max(0, goodMaxPct - 0.1) / 100;
+        const targetGoodReceiptTotal = karatBaseSarPerGram * targetGoodMultiplier * vatFactor * shopWeight;
+
+        // Target Max Receipt for Fair Price (at fairMaxPct)
+        const targetFairMultiplier = 1 + fairMaxPct / 100;
+        const targetFairReceiptTotal = karatBaseSarPerGram * targetFairMultiplier * vatFactor * shopWeight;
+
+        lastComputed = {
+          karatLabel: karatObj.label,
+          shopName: state.shopName || `${karatObj.label} Gold Piece`,
+          shopTotalPrice,
+          shopWeight,
+          shopNetPerGram,
+          karatBaseSarPerGram,
+          mfgChargePerGram,
+          mfgRatePct,
+          vatRate,
+          timestamp: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short" })
+        };
+
+        // Render Step 1 & 2
+        el.outGlobal24kSar.textContent = fmtSar(global24kSarPerGram);
+        el.lblKaratBench.textContent = `Selected ${karatObj.label} Base / g`;
+        el.outKaratBaseSar.textContent = fmtSar(karatBaseSarPerGram);
+        el.subKaratPurity.textContent = `${karatObj.pctText} purity (Excl. VAT)`;
+
+        el.outPlannedExclVat.textContent = fmtSar(plannedRawExclVat);
+        el.outPlannedWeightSub.textContent = `${fmtNum(desiredGrams)}g pure metal`;
+        el.outPlannedInclVat.textContent = fmtSar(plannedRawInclVat);
+
+        // Render Breakdown
+        el.bdGrossPerGram.textContent = `${fmtNum(shopGrossPerGram)} SAR/g`;
+        el.bdVatLabel.textContent = `VAT Extracted / g (${fmtNum(vatRate, 1)}%)`;
+        el.bdVatPerGram.textContent = `-${fmtNum(extractedVatPerGram)} SAR/g`;
+        el.bdNetPerGram.textContent = `${fmtNum(shopNetPerGram)} SAR/g`;
+        el.bdGlobalLabel.textContent = `Global ${karatObj.label} Base / g`;
+        el.bdGlobalPerGram.textContent = `${fmtNum(karatBaseSarPerGram)} SAR/g`;
+
+        const mfgSign = mfgChargePerGram >= 0 ? "+" : "";
+        el.bdMfgPerGram.textContent = `${mfgSign}${fmtNum(mfgChargePerGram)} SAR/g`;
+        el.bdTotalMfg.textContent = fmtSar(totalMfgPiece);
+
+        // Render Verdict
+        renderVerdict(
+          mfgRatePct,
+          mfgChargePerGram,
+          goodMaxPct,
+          fairMaxPct,
+          targetGoodReceiptTotal,
+          targetFairReceiptTotal,
+          shopTotalPrice,
+          shopWeight
+        );
+      }
+
+      function renderVerdict(
+        mfgRatePct,
+        mfgChargePerGram,
+        goodMaxPct,
+        fairMaxPct,
+        targetGoodReceiptTotal,
+        targetFairReceiptTotal,
+        shopTotalPrice,
+        shopWeight
+      ) {
+        el.verdictCard.classList.remove("good", "fair", "overpriced");
+
+        const sign = mfgRatePct >= 0 ? "+" : "";
+        el.verdictRate.textContent = `${sign}${fmtNum(mfgRatePct, 2)}%`;
+
+        if (shopWeight <= 0 || shopTotalPrice <= 0) {
+          el.verdictCard.classList.add("fair");
+          el.verdictBadge.textContent = "ENTER SHOP QUOTE";
+          el.verdictDesc.textContent = "Enter total shop receipt price and weight above.";
+          el.negotiationBox.style.display = "none";
+          return;
+        }
+
+        el.negotiationBox.style.display = "flex";
+
+        if (mfgRatePct < goodMaxPct) {
+          el.verdictCard.classList.add("good");
+          el.verdictBadge.textContent = `GOOD PRICE (< ${fmtNum(goodMaxPct, 1)}%)`;
+          el.verdictDesc.textContent = mfgRatePct < 0
+            ? `Below raw gold spot (${fmtNum(mfgChargePerGram)} SAR/g). Verify karat stamp and scale weight.`
+            : `Strong Saudi market deal! Making fee is ${fmtNum(mfgRatePct, 2)}% (+${fmtNum(mfgChargePerGram)} SAR/g), below your ${fmtNum(goodMaxPct, 1)}% limit.`;
+          el.negotiationText.textContent = `Max Good Receipt (<${fmtNum(goodMaxPct, 1)}%):`;
+          el.negotiationTarget.textContent = fmtSar(targetGoodReceiptTotal);
+        } else if (mfgRatePct <= fairMaxPct) {
+          el.verdictCard.classList.add("fair");
+          el.verdictBadge.textContent = `FAIR PRICE (${fmtNum(goodMaxPct, 1)}% – ${fmtNum(fairMaxPct, 1)}%)`;
+          el.verdictDesc.textContent = `Standard retail rate (+${fmtNum(mfgChargePerGram)} SAR/g). Normal for detailed sets; you can negotiate toward the Good target.`;
+          const savings = Math.max(0, shopTotalPrice - targetGoodReceiptTotal);
+          el.negotiationText.textContent = `Offer for Good (<${fmtNum(goodMaxPct, 1)}%):`;
+          el.negotiationTarget.textContent = `${fmtSar(targetGoodReceiptTotal)} (-${fmtNum(savings)} SAR)`;
+        } else {
+          el.verdictCard.classList.add("overpriced");
+          el.verdictBadge.textContent = `OVERPRICED (> ${fmtNum(fairMaxPct, 1)}%)`;
+          el.verdictDesc.textContent = `High making markup of ${fmtNum(mfgRatePct, 2)}% (+${fmtNum(mfgChargePerGram)} SAR/g) above global gold value.`;
+          const savings = Math.max(0, shopTotalPrice - targetFairReceiptTotal);
+          el.negotiationText.textContent = `Max Fair Price (${fmtNum(fairMaxPct, 1)}%):`;
+          el.negotiationTarget.textContent = `${fmtSar(targetFairReceiptTotal)} (Save ${fmtNum(savings)} SAR)`;
+        }
+      }
+
+      // ======================================================================
+      // SAVED SHOP QUOTES COMPARISON
+      // ======================================================================
+      function renderSavedQuotes() {
+        el.savedCount.textContent = savedQuotes.length;
+
+        if (savedQuotes.length === 0) {
+          el.savedQuotesList.innerHTML = `
+            <div style="text-align:center; padding: 14px 8px; color: var(--text-muted); font-size: 0.78rem;">
+              No quotes saved yet. Tap <strong>+ Save Quote to Compare</strong> above to track shops.
+            </div>
+          `;
+          return;
+        }
+
+        // Find lowest manufacturing rate % for Best Deal badge
+        let bestIdx = 0;
+        savedQuotes.forEach((q, idx) => {
+          if (q.mfgRatePct < savedQuotes[bestIdx].mfgRatePct) bestIdx = idx;
+        });
+
+        let html = "";
+        savedQuotes.forEach((q, idx) => {
+          let tier = "good";
+          let tierLabel = "GOOD";
+          if (q.mfgRatePct > state.fairMaxPct) {
+            tier = "overpriced";
+            tierLabel = "OVERPRICED";
+          } else if (q.mfgRatePct >= state.goodMaxPct) {
+            tier = "fair";
+            tierLabel = "FAIR";
+          }
+
+          const isBest = savedQuotes.length > 1 && idx === bestIdx;
+          const sign = q.mfgRatePct >= 0 ? "+" : "";
+
+          html += `
+            <div class="saved-item ${isBest ? "best-deal" : ""}">
+              <div class="saved-item-header">
+                <div>
+                  <div class="saved-shop-name">
+                    <span>${escapeHtml(q.shopName)}</span>
+                    ${isBest ? `<span class="best-badge">Best Deal</span>` : ""}
+                  </div>
+                  <div class="saved-meta">${q.karatLabel} • ${fmtNum(q.shopWeight)}g • Total: ${fmtSar(q.shopTotalPrice)}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:5px;">
+                  <span class="mini-tag ${tier}">${tierLabel} ${sign}${fmtNum(q.mfgRatePct, 1)}%</span>
+                  <button type="button" class="btn-del-item" data-del-idx="${idx}" aria-label="Delete">✕</button>
+                </div>
+              </div>
+              <div class="saved-stats">
+                <span>Net: <strong>${fmtNum(q.shopNetPerGram)}/g</strong></span>
+                <span>Base: <strong>${fmtNum(q.karatBaseSarPerGram)}/g</strong></span>
+                <span>Mfg: <strong>${sign}${fmtNum(q.mfgChargePerGram)} SAR/g</strong></span>
+              </div>
+            </div>
+          `;
+        });
+
+        el.savedQuotesList.innerHTML = html;
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      // ======================================================================
+      // EVENT LISTENERS & LIFECYCLE HOOKS
+      // ======================================================================
+      function updateKaratButtonsUI() {
+        const btns = el.karatSelector.querySelectorAll(".karat-btn");
+        btns.forEach((btn) => {
+          const k = parseInt(btn.getAttribute("data-karat"), 10);
+          btn.classList.toggle("active", k === state.selectedKarat);
+        });
+      }
+
+      function updateVatPillsUI() {
+        const v = parseFloat(el.vatRate.value);
+        el.pillVat15.classList.toggle("active", v === 15);
+        el.pillVat0.classList.toggle("active", v === 0);
+      }
+
+      [
+        el.spotUsdOz,
+        el.exchangeRate,
+        el.goodMaxPct,
+        el.fairMaxPct,
+        el.desiredGrams,
+        el.shopName,
+        el.shopTotalPrice,
+        el.shopWeight
+      ].forEach((input) => {
+        input.addEventListener("input", () => recalculate(true));
+        input.addEventListener("change", () => recalculate(true));
+      });
+
+      el.vatRate.addEventListener("input", () => {
+        updateVatPillsUI();
+        recalculate(true);
+      });
+
+      [el.pillVat15, el.pillVat0].forEach((pill) => {
+        pill.addEventListener("click", () => {
+          el.vatRate.value = pill.getAttribute("data-vat");
+          updateVatPillsUI();
+          recalculate(true);
+        });
+      });
+
+      el.karatSelector.addEventListener("click", (e) => {
+        const btn = e.target.closest(".karat-btn");
+        if (!btn) return;
+        state.selectedKarat = parseInt(btn.getAttribute("data-karat"), 10);
+        updateKaratButtonsUI();
+        recalculate(true);
+      });
+
+      el.btnSyncWeight.addEventListener("click", () => {
+        el.shopWeight.value = el.desiredGrams.value;
+        recalculate(true);
+        showToast("Weight synced");
+      });
+
+      el.btnSaveQuote.addEventListener("click", () => {
+        if (!lastComputed || lastComputed.shopWeight <= 0 || lastComputed.shopTotalPrice <= 0) {
+          showToast("Enter valid price & weight first");
+          return;
+        }
+        const entry = {
+          ...lastComputed,
+          shopName: el.shopName.value.trim() || `Shop #${savedQuotes.length + 1} (${lastComputed.karatLabel})`
+        };
+        savedQuotes.unshift(entry);
+        persistAll();
+        renderSavedQuotes();
+        showToast("Quote saved");
+      });
+
+      el.savedQuotesList.addEventListener("click", (e) => {
+        const delBtn = e.target.closest(".btn-del-item");
+        if (!delBtn) return;
+        const idx = parseInt(delBtn.getAttribute("data-del-idx"), 10);
+        if (!isNaN(idx)) {
+          savedQuotes.splice(idx, 1);
+          persistAll();
+          renderSavedQuotes();
+          showToast("Quote removed");
+        }
+      });
+
+      el.btnClearQuotes.addEventListener("click", () => {
+        if (savedQuotes.length === 0) return;
+        savedQuotes = [];
+        persistAll();
+        renderSavedQuotes();
+        showToast("Cleared all quotes");
+      });
+
+      // Flush state immediately when iOS backgrounds/suspends the app
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+          persistAll();
+        }
+      });
+      window.addEventListener("pagehide", persistAll);
+
+      // ======================================================================
+      // BOOTSTRAP
+      // ======================================================================
+      setupAppleWebAppAssets();
+      restoreAll().then(() => {
+        recalculate(false);
+        renderSavedQuotes();
+      });
+    })();
+  </script>
+</body>
+</html>
