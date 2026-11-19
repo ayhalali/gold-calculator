@@ -9,8 +9,8 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#091326" />
   <title>Saudi Gold Price Evaluator</title>
-  <link id="appleTouchIcon" rel="apple-touch-icon" />
-  <link id="appManifest" rel="manifest" />
+  <link id="appleTouchIcon" rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23091326'/%3E%3Ccircle cx='90' cy='90' r='62' fill='%23d49b27'/%3E%3Ccircle cx='90' cy='90' r='50' fill='none' stroke='%23091326' stroke-width='4'/%3E%3Ctext x='90' y='98' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='32' fill='%23091326'%3E24K%3C/text%3E%3C/svg%3E" />
+  <link id="appManifest" rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Saudi%20Gold%20Price%20Evaluator%22%2C%22short_name%22%3A%22Gold%20Evaluator%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23091326%22%2C%22theme_color%22%3A%22%23091326%22%7D" />
   <style>
     /* ==========================================================================
        DESIGN TOKENS & RESET (iPhone Safari & Chrome iOS Optimized)
@@ -74,7 +74,7 @@
     }
 
     /* ==========================================================================
-       SLIM COMPACT HEADER (< 48px content height + iOS safe-area-inset-top)
+       SLIM COMPACT HEADER
        ========================================================================== */
     .app-header {
       background: linear-gradient(135deg, var(--navy-950) 0%, var(--navy-800) 100%);
@@ -233,7 +233,7 @@
     input[type="text"] {
       width: 100%;
       padding: 10px 11px;
-      font-size: 16px; /* Prevents iOS auto-zoom */
+      font-size: 16px;
       font-weight: 700;
       color: var(--text-input);
       background-color: var(--bg-input);
@@ -266,6 +266,167 @@
 
     .has-unit input {
       padding-right: 46px;
+    }
+
+    /* Spot Price Live Status & Refresh Trigger */
+    .spot-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 5px;
+    }
+
+    .spot-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .spot-status-pill.live {
+      background: #ecfdf5;
+      color: #065f46;
+      border-color: #a7f3d0;
+    }
+
+    .spot-status-pill.loading {
+      background: #fefbf2;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .spot-status-pill.offline {
+      background: #f1f5f9;
+      color: #475569;
+      border-color: #cbd5e1;
+    }
+
+    .btn-refresh-spot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      color: var(--navy-900);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.2s ease, background 0.15s ease;
+    }
+
+    .btn-refresh-spot:active {
+      background: var(--bg-subtle);
+    }
+
+    .btn-refresh-spot.spinning svg {
+      animation: spin360 0.8s linear infinite;
+    }
+
+    @keyframes spin360 {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Collapsible Threshold Drawer */
+    .threshold-details {
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      padding: 8px 10px;
+    }
+
+    .threshold-details summary {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .threshold-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .threshold-details[open] summary {
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .btn-reset-defaults {
+      margin-top: 8px;
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      color: var(--navy-900);
+      font-size: 0.73rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-reset-defaults:active {
+      background: #e2e8f0;
+    }
+
+    /* Live Karat Target Guide Table */
+    .target-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.73rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .target-table th {
+      text-align: left;
+      padding: 7px 5px;
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+    }
+
+    .target-table th:not(:first-child),
+    .target-table td:not(:first-child) {
+      text-align: right;
+    }
+
+    .target-table td {
+      padding: 8px 5px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .target-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .target-table tr.active-karat-row {
+      background: var(--gold-50);
+    }
+
+    .target-table tr.active-karat-row td:first-child {
+      color: var(--gold-600);
+      font-weight: 800;
     }
 
     .pill-group {
@@ -645,7 +806,7 @@
             <polygon points="6 7 18 7 21 17 3 17 6 7"></polygon>
           </svg>
         </div>
-        <span class="brand-title">Saudi Gold Evaluator</span>
+        <span class="brand-title">Saudi Gold Price Evaluator</span>
       </div>
 
       <div class="saved-status" id="savedStatusBadge" aria-live="polite">
@@ -657,12 +818,12 @@
 
   <main class="container">
 
-    <!-- 1. MARKET & TAX SETTINGS -->
+    <!-- 1. MARKET & THRESHOLD SETTINGS -->
     <section class="card">
       <div class="card-header">
         <div class="card-title-group">
           <span class="step-badge">1</span>
-          <h2 class="card-title">Market &amp; Tax Settings</h2>
+          <h2 class="card-title">Market &amp; Threshold Settings</h2>
         </div>
         <div class="pill-group">
           <button type="button" class="pill-btn active" id="pillVat15" data-vat="15">15% VAT</button>
@@ -675,8 +836,18 @@
           <div class="field">
             <label for="spotUsdOz">24K Spot Price ($ / oz)</label>
             <div class="input-wrap has-unit">
-              <input type="number" id="spotUsdOz" step="0.01" min="0" value="3950.00" inputmode="decimal" />
+              <input type="number" id="spotUsdOz" step="0.01" min="0" value="3740.69" inputmode="decimal" />
               <span class="input-unit">$/oz</span>
+            </div>
+            <div class="spot-meta-row">
+              <span class="spot-status-pill loading" id="spotStatusPill">Fetching live...</span>
+              <button type="button" class="btn-refresh-spot" id="btnRefreshSpot" title="Refresh live gold price" aria-label="Refresh live gold price">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <polyline points="1 20 1 14 7 14"></polyline>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -685,6 +856,9 @@
             <div class="input-wrap has-unit">
               <input type="number" id="exchangeRate" step="0.0001" min="0.1" value="3.75" inputmode="decimal" />
               <span class="input-unit">SAR</span>
+            </div>
+            <div class="spot-meta-row">
+              <span style="font-size:0.67rem; color:var(--text-muted); font-weight:600;">SAR Pegged Default</span>
             </div>
           </div>
         </div>
@@ -698,35 +872,42 @@
             </div>
           </div>
 
-          <div class="grid-2" style="gap: 6px;">
-            <div class="field">
-              <label for="goodMaxPct">Good Max %</label>
-              <div class="input-wrap has-unit">
-                <input type="number" id="goodMaxPct" step="0.5" min="0" max="100" value="8" inputmode="decimal" />
-                <span class="input-unit">%</span>
-              </div>
-            </div>
-            <div class="field">
-              <label for="fairMaxPct">Fair Max %</label>
-              <div class="input-wrap has-unit">
-                <input type="number" id="fairMaxPct" step="0.5" min="0" max="100" value="14" inputmode="decimal" />
-                <span class="input-unit">%</span>
-              </div>
-            </div>
+          <div class="metric-box highlight-gold" style="padding: 7px 10px;">
+            <div class="metric-label">Global 24K Price / g</div>
+            <div class="metric-val" id="outGlobal24kSar" style="font-size: 0.98rem;">451.04 SAR</div>
+            <div class="metric-sub">31.1035 g / troy oz</div>
           </div>
         </div>
 
-        <div class="bench-strip">
-          <div class="metric-box highlight-gold">
-            <div class="metric-label">Global 24K Base / g</div>
-            <div class="metric-val" id="outGlobal24kSar">476.23 SAR</div>
-            <div class="metric-sub">31.1035 g / troy oz</div>
+        <details class="threshold-details">
+          <summary>
+            <span>Decision Thresholds (Good &lt; <span id="lblSummaryGood">5</span>% · Fair ≤ <span id="lblSummaryFair">10</span>%)</span>
+            <span style="font-size:0.68rem; color:var(--text-muted);">Edit ▾</span>
+          </summary>
+          <div class="grid-2" style="gap: 8px;">
+            <div class="field">
+              <label for="goodMaxPct">Good Price Max (%)</label>
+              <div class="input-wrap has-unit">
+                <input type="number" id="goodMaxPct" step="0.5" min="0" max="100" value="5" inputmode="decimal" />
+                <span class="input-unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="fairMaxPct">Fair Price Max (%)</label>
+              <div class="input-wrap has-unit">
+                <input type="number" id="fairMaxPct" step="0.5" min="0" max="100" value="10" inputmode="decimal" />
+                <span class="input-unit">%</span>
+              </div>
+            </div>
           </div>
+          <button type="button" class="btn-reset-defaults" id="btnResetDefaults">Reset Defaults (5% / 10% · 3.75 SAR · 15% VAT)</button>
+        </details>
 
-          <div class="metric-box highlight-gold">
-            <div class="metric-label" id="lblKaratBench">Selected 21K Base / g</div>
-            <div class="metric-val" id="outKaratBaseSar">416.70 SAR</div>
-            <div class="metric-sub" id="subKaratPurity">87.50% purity (Excl. VAT)</div>
+        <div class="bench-strip">
+          <div class="metric-box highlight-gold" style="grid-column: span 2;">
+            <div class="metric-label" id="lblKaratBench">Selected 21K Base / g (Excl. VAT)</div>
+            <div class="metric-val" id="outKaratBaseSar">394.66 SAR</div>
+            <div class="metric-sub" id="subKaratPurity">87.50% purity raw metal value</div>
           </div>
         </div>
       </div>
@@ -737,7 +918,7 @@
       <div class="card-header">
         <div class="card-title-group">
           <span class="step-badge">2</span>
-          <h2 class="card-title">Karat &amp; Planned Purchase</h2>
+          <h2 class="card-title">Karat &amp; Piece Weight</h2>
         </div>
       </div>
 
@@ -762,7 +943,7 @@
         </div>
 
         <div class="field" style="margin-top: 10px;">
-          <label for="desiredGrams">Desired Gold Weight (Grams)</label>
+          <label for="desiredGrams">Desired / Piece Weight (Grams)</label>
           <div class="input-wrap has-unit">
             <input type="number" id="desiredGrams" step="0.01" min="0.01" value="15.50" inputmode="decimal" />
             <span class="input-unit">g</span>
@@ -772,13 +953,13 @@
         <div class="bench-strip">
           <div class="metric-box">
             <div class="metric-label">Raw Gold (Excl. VAT)</div>
-            <div class="metric-val" id="outPlannedExclVat">6,458.89 SAR</div>
+            <div class="metric-val" id="outPlannedExclVat">6,117.20 SAR</div>
             <div class="metric-sub" id="outPlannedWeightSub">15.50g pure metal</div>
           </div>
 
           <div class="metric-box">
             <div class="metric-label">Raw Gold (Incl. VAT)</div>
-            <div class="metric-val" id="outPlannedInclVat">7,427.72 SAR</div>
+            <div class="metric-val" id="outPlannedInclVat">7,034.78 SAR</div>
             <div class="metric-sub">0% manufacturing floor</div>
           </div>
         </div>
@@ -805,7 +986,7 @@
           <div class="field">
             <label for="shopTotalPrice">Shop Total (Incl. VAT)</label>
             <div class="input-wrap has-unit">
-              <input type="number" id="shopTotalPrice" step="0.01" min="0" value="7980.00" inputmode="decimal" />
+              <input type="number" id="shopTotalPrice" step="0.01" min="0" value="7950.00" inputmode="decimal" />
               <span class="input-unit">SAR</span>
             </div>
           </div>
@@ -823,7 +1004,7 @@
         <div class="verdict-card good" id="verdictCard">
           <div class="verdict-top">
             <span class="verdict-badge" id="verdictBadge">GOOD PRICE</span>
-            <span class="verdict-rate" id="verdictRate">+7.44%</span>
+            <span class="verdict-rate" id="verdictRate">+4.20%</span>
           </div>
           <p class="verdict-desc" id="verdictDesc"></p>
           <div class="negotiation-tip" id="negotiationBox">
@@ -836,41 +1017,69 @@
         <div class="breakdown-list">
           <div class="breakdown-row">
             <span>Shop Gross / g (Incl. VAT)</span>
-            <span class="breakdown-val" id="bdGrossPerGram">514.84 SAR/g</span>
+            <span class="breakdown-val" id="bdGrossPerGram">512.90 SAR/g</span>
           </div>
           <div class="breakdown-row alt">
             <span id="bdVatLabel">VAT Extracted / g (15.0%)</span>
-            <span class="breakdown-val" id="bdVatPerGram">-67.15 SAR/g</span>
+            <span class="breakdown-val" id="bdVatPerGram">-66.90 SAR/g</span>
           </div>
           <div class="breakdown-row bold">
             <span>Shop Net / g (Excl. VAT)</span>
-            <span class="breakdown-val" id="bdNetPerGram">447.69 SAR/g</span>
+            <span class="breakdown-val" id="bdNetPerGram">446.00 SAR/g</span>
           </div>
           <div class="breakdown-row alt">
             <span id="bdGlobalLabel">Global 21K Base / g</span>
-            <span class="breakdown-val" id="bdGlobalPerGram">416.70 SAR/g</span>
+            <span class="breakdown-val" id="bdGlobalPerGram">394.66 SAR/g</span>
           </div>
           <div class="breakdown-row bold">
             <span>Manufacturing Charge / g</span>
-            <span class="breakdown-val" id="bdMfgPerGram">+30.98 SAR/g</span>
+            <span class="breakdown-val" id="bdMfgPerGram">+51.34 SAR/g</span>
           </div>
-          <div class="breakdown-row alt">
+          <div class="breakdown-row alt bold">
             <span>Total Manufacturing Fee (Piece)</span>
-            <span class="breakdown-val" id="bdTotalMfg">480.24 SAR</span>
+            <span class="breakdown-val" id="bdTotalMfg">795.82 SAR</span>
           </div>
         </div>
 
         <button type="button" class="btn-primary" id="btnSaveQuote">
-          <span>+ Save Quote to Compare</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Save Quote to Compare
         </button>
       </div>
     </section>
 
-    <!-- 4. SAVED SHOP QUOTES COMPARISON -->
+    <!-- 4. LIVE KARAT TARGET GUIDE -->
     <section class="card">
       <div class="card-header">
         <div class="card-title-group">
           <span class="step-badge">4</span>
+          <h2 class="card-title">Live Karat Target Guide (<span id="lblGuideVat">15%</span> VAT)</h2>
+        </div>
+      </div>
+      <div class="card-body" style="padding: 8px 8px;">
+        <table class="target-table" aria-label="Live Karat Target Guide">
+          <thead>
+            <tr>
+              <th>Karat</th>
+              <th>Base / g</th>
+              <th id="thGoodGuide">Good (&lt;5%)</th>
+              <th id="thFairGuide">Fair (≤10%)</th>
+              <th id="thTotalGuide">Good Total</th>
+            </tr>
+          </thead>
+          <tbody id="karatGuideBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 5. SAVED SHOP QUOTES COMPARISON -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="step-badge">5</span>
           <h2 class="card-title">Saved Shop Quotes (<span id="savedCount">0</span>)</h2>
         </div>
         <button type="button" class="btn-ghost-danger" id="btnClearQuotes">Clear</button>
@@ -890,12 +1099,26 @@
       "use strict";
 
       // ======================================================================
-      // CONSTANTS & DEFAULT STATE (Saudi Market Calibrated: <8% Good, <=14% Fair)
+      // CONSTANTS & DEFAULT STATE (< 5% Good Price, <= 10% Fair Price)
       // ======================================================================
       const TROY_OZ_TO_GRAMS = 31.1035;
-      const STORAGE_KEY = "ksa_gold_ios_app_v2";
+      const STORAGE_KEY = "ksa_gold_ios_app_v3";
+      const LEGACY_STORAGE_KEYS = ["ksa_gold_ios_app_v2", "ksa_gold_ios_app_v1"];
       const DB_NAME = "KsaGoldEvaluatorDB";
       const DB_STORE = "appStateStore";
+
+      const DEFAULTS = {
+        spotUsdOz: 3740.69,
+        exchangeRate: 3.75,
+        vatRate: 15.0,
+        goodMaxPct: 5.0,
+        fairMaxPct: 10.0,
+        selectedKarat: 21,
+        desiredGrams: 15.50,
+        shopName: "",
+        shopTotalPrice: 7950.00,
+        shopWeight: 15.50
+      };
 
       const KARATS = [
         { k: 24, label: "24K", purity: 1.0, pctText: "100.0%" },
@@ -904,79 +1127,10 @@
         { k: 18, label: "18K", purity: 18 / 24, pctText: "75.00%" }
       ];
 
-      let state = {
-        spotUsdOz: 3950.00,
-        exchangeRate: 3.75,
-        vatRate: 15.0,
-        goodMaxPct: 8.0,
-        fairMaxPct: 14.0,
-        selectedKarat: 21,
-        desiredGrams: 15.50,
-        shopName: "",
-        shopTotalPrice: 7980.00,
-        shopWeight: 15.50
-      };
-
+      let state = { ...DEFAULTS };
       let savedQuotes = [];
       let lastComputed = null;
       let hashSyncTimer = null;
-
-      // ======================================================================
-      // DYNAMIC APPLE TOUCH ICON & MANIFEST (iOS Home Screen Ready)
-      // ======================================================================
-      function setupAppleWebAppAssets() {
-        try {
-          const canvas = document.createElement("canvas");
-          canvas.width = 180;
-          canvas.height = 180;
-          const ctx = canvas.getContext("2d");
-
-          // Deep Navy Background
-          ctx.fillStyle = "#091326";
-          ctx.fillRect(0, 0, 180, 180);
-
-          // Gold Coin Circle
-          const grad = ctx.createLinearGradient(30, 30, 150, 150);
-          grad.addColorStop(0, "#f5d061");
-          grad.addColorStop(1, "#b47b16");
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(90, 90, 62, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Inner Ring & Text
-          ctx.strokeStyle = "#091326";
-          ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.arc(90, 90, 50, 0, Math.PI * 2);
-          ctx.stroke();
-
-          ctx.fillStyle = "#091326";
-          ctx.font = "bold 34px -apple-system, sans-serif";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText("24K", 90, 92);
-
-          const iconDataUrl = canvas.toDataURL("image/png");
-          const iconLink = document.getElementById("appleTouchIcon");
-          if (iconLink) iconLink.href = iconDataUrl;
-
-          const manifest = {
-            name: "Saudi Gold Price Evaluator",
-            short_name: "Gold Evaluator",
-            start_url: ".",
-            display: "standalone",
-            background_color: "#091326",
-            theme_color: "#091326",
-            icons: [{ src: iconDataUrl, sizes: "180x180", type: "image/png" }]
-          };
-          const manifestBlob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
-          const manifestLink = document.getElementById("appManifest");
-          if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
-        } catch (e) {
-          // Safe fallback if canvas/blob restricted
-        }
-      }
 
       // ======================================================================
       // DOM REFERENCES
@@ -984,10 +1138,15 @@
       const el = {
         savedStatusText: document.getElementById("savedStatusText"),
         spotUsdOz: document.getElementById("spotUsdOz"),
+        spotStatusPill: document.getElementById("spotStatusPill"),
+        btnRefreshSpot: document.getElementById("btnRefreshSpot"),
         exchangeRate: document.getElementById("exchangeRate"),
         vatRate: document.getElementById("vatRate"),
         goodMaxPct: document.getElementById("goodMaxPct"),
         fairMaxPct: document.getElementById("fairMaxPct"),
+        btnResetDefaults: document.getElementById("btnResetDefaults"),
+        lblSummaryGood: document.getElementById("lblSummaryGood"),
+        lblSummaryFair: document.getElementById("lblSummaryFair"),
         pillVat15: document.getElementById("pillVat15"),
         pillVat0: document.getElementById("pillVat0"),
         karatSelector: document.getElementById("karatSelector"),
@@ -1024,10 +1183,174 @@
         bdMfgPerGram: document.getElementById("bdMfgPerGram"),
         bdTotalMfg: document.getElementById("bdTotalMfg"),
 
+        lblGuideVat: document.getElementById("lblGuideVat"),
+        thGoodGuide: document.getElementById("thGoodGuide"),
+        thFairGuide: document.getElementById("thFairGuide"),
+        thTotalGuide: document.getElementById("thTotalGuide"),
+        karatGuideBody: document.getElementById("karatGuideBody"),
+
         savedCount: document.getElementById("savedCount"),
         savedQuotesList: document.getElementById("savedQuotesList"),
         toastMsg: document.getElementById("toastMsg")
       };
+
+      // ======================================================================
+      // LIVE 24K SPOT PRICE AUTO-FETCH (3-TIER KEYLESS FALLBACK CHAIN)
+      // ======================================================================
+      function setSpotStatus(type, text) {
+        if (!el.spotStatusPill) return;
+        el.spotStatusPill.classList.remove("live", "loading", "offline");
+        el.spotStatusPill.classList.add(type);
+        el.spotStatusPill.textContent = text;
+      }
+
+      async function fetchWithTimeout(url, timeoutMs = 6500) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const response = await fetch(url, {
+            signal: controller.signal,
+            cache: "no-store"
+          });
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          return await response.json();
+        } finally {
+          clearTimeout(timer);
+        }
+      }
+
+      async function fetchLiveGoldSpotOnce(isManual = false) {
+        if (el.btnRefreshSpot) el.btnRefreshSpot.classList.add("spinning");
+        setSpotStatus("loading", "Fetching live...");
+
+        const sources = [
+          {
+            name: "Gold-API",
+            url: "https://api.gold-api.com/price/XAU",
+            extract: (data) => parseFloat(data && data.price)
+          },
+          {
+            name: "Currency-CDN",
+            url: "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/xau.json",
+            extract: (data) => {
+              const rate = parseFloat(data && data.xau && data.xau.usd);
+              if (!isFinite(rate) || rate <= 0) return NaN;
+              return rate < 1 ? 1 / rate : rate;
+            }
+          },
+          {
+            name: "Currency-Pages",
+            url: "https://latest.currency-api.pages.dev/v1/currencies/xau.json",
+            extract: (data) => {
+              const rate = parseFloat(data && data.xau && data.xau.usd);
+              if (!isFinite(rate) || rate <= 0) return NaN;
+              return rate < 1 ? 1 / rate : rate;
+            }
+          }
+        ];
+
+        for (const src of sources) {
+          try {
+            const json = await fetchWithTimeout(src.url, 6500);
+            const price = src.extract(json);
+            if (isFinite(price) && price > 500 && price < 50000) {
+              const roundedPrice = Number(price.toFixed(2));
+              el.spotUsdOz.value = roundedPrice.toFixed(2);
+              state.spotUsdOz = roundedPrice;
+
+              const timeStr = new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit"
+              });
+              setSpotStatus("live", `Live · Updated ${timeStr}`);
+              recalculate(true);
+              if (el.btnRefreshSpot) el.btnRefreshSpot.classList.remove("spinning");
+              if (isManual) showToast(`Live gold updated: $${roundedPrice.toFixed(2)}/oz`);
+              return true;
+            }
+          } catch (err) {
+            // Try next fallback source in chain
+          }
+        }
+
+        if (el.btnRefreshSpot) el.btnRefreshSpot.classList.remove("spinning");
+        setSpotStatus("offline", "Offline · Saved price");
+        if (isManual) showToast("Offline: using saved spot price");
+        return false;
+      }
+
+      // ======================================================================
+      // DYNAMIC APPLE TOUCH ICON, MANIFEST & OFFLINE SERVICE WORKER
+      // ======================================================================
+      function setupAppleWebAppAssets() {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = 180;
+          canvas.height = 180;
+          const ctx = canvas.getContext("2d");
+
+          ctx.fillStyle = "#091326";
+          ctx.fillRect(0, 0, 180, 180);
+
+          const grad = ctx.createLinearGradient(30, 30, 150, 150);
+          grad.addColorStop(0, "#f5d061");
+          grad.addColorStop(1, "#b47b16");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(90, 90, 62, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = "#091326";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.arc(90, 90, 50, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = "#091326";
+          ctx.font = "bold 34px -apple-system, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("24K", 90, 92);
+
+          const iconDataUrl = canvas.toDataURL("image/png");
+          const iconLink = document.getElementById("appleTouchIcon");
+          if (iconLink) iconLink.href = iconDataUrl;
+
+          const manifest = {
+            name: "Saudi Gold Price Evaluator",
+            short_name: "Gold Evaluator",
+            start_url: ".",
+            display: "standalone",
+            background_color: "#091326",
+            theme_color: "#091326",
+            icons: [{ src: iconDataUrl, sizes: "180x180", type: "image/png" }]
+          };
+          const manifestBlob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+          const manifestLink = document.getElementById("appManifest");
+          if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
+
+          if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
+            const swCode = `
+              const CACHE = 'ksa-gold-shell-v3';
+              self.addEventListener('install', e => {
+                self.skipWaiting();
+                e.waitUntil(caches.open(CACHE).then(c => c.add(self.location.href).catch(() => {})));
+              });
+              self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+              self.addEventListener('fetch', e => {
+                if (e.request.mode === 'navigate') {
+                  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+                }
+              });
+            `;
+            const swBlob = new Blob([swCode], { type: "application/javascript" });
+            const swUrl = URL.createObjectURL(swBlob);
+            navigator.serviceWorker.register(swUrl).catch(() => {});
+          }
+        } catch (e) {
+          // Safe fallback if canvas/blob/SW restricted
+        }
+      }
 
       // ======================================================================
       // FORMATTERS
@@ -1068,7 +1391,6 @@
 
       // ======================================================================
       // TRIPLE-LAYER PERSISTENCE (localStorage + IndexedDB + URL Hash)
-      // Guarantees persistence across iOS Safari, Chrome iOS & Home Screen clips
       // ======================================================================
       function openIndexedDB() {
         return new Promise((resolve, reject) => {
@@ -1095,12 +1417,12 @@
         }
       }
 
-      async function readFromIndexedDB() {
+      async function readFromIndexedDB(key = STORAGE_KEY) {
         try {
           const db = await openIndexedDB();
           return await new Promise((resolve) => {
             const tx = db.transaction(DB_STORE, "readonly");
-            const req = tx.objectStore(DB_STORE).get(STORAGE_KEY);
+            const req = tx.objectStore(DB_STORE).get(key);
             req.onsuccess = () => resolve(req.result || null);
             req.onerror = () => resolve(null);
           });
@@ -1134,33 +1456,49 @@
       function persistAll() {
         flashSavedIndicator();
         const payload = {
+          version: 3,
           state,
           savedQuotes,
           updatedAt: Date.now()
         };
 
-        // Layer 1: localStorage
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
         } catch (err) {}
 
-        // Layer 2: IndexedDB
         writeToIndexedDB(payload);
 
-        // Layer 3: Debounced URL Hash (persists in iOS Home Screen Web Clips)
         clearTimeout(hashSyncTimer);
         hashSyncTimer = setTimeout(() => {
           encodeHashState(payload);
         }, 250);
       }
 
+      function migratePayloadIfNeeded(payload) {
+        if (!payload) return null;
+        const cloned = JSON.parse(JSON.stringify(payload));
+        if (cloned.state) {
+          // Migrate legacy 8%/14% or 15%/20% default thresholds cleanly to 5% and 10%
+          const g = parseFloat(cloned.state.goodMaxPct);
+          const f = parseFloat(cloned.state.fairMaxPct);
+          if (!cloned.version || cloned.version < 3) {
+            if ((g === 8 && f === 14) || (g === 15 && f === 20) || !isFinite(g) || !isFinite(f)) {
+              cloned.state.goodMaxPct = DEFAULTS.goodMaxPct;
+              cloned.state.fairMaxPct = DEFAULTS.fairMaxPct;
+            }
+          }
+        }
+        return cloned;
+      }
+
       function applyPayloadToUI(payload) {
         if (!payload) return;
-        if (payload.state) {
-          state = { ...state, ...payload.state };
+        const migrated = migratePayloadIfNeeded(payload);
+        if (migrated.state) {
+          state = { ...state, ...migrated.state };
         }
-        if (Array.isArray(payload.savedQuotes)) {
-          savedQuotes = payload.savedQuotes;
+        if (Array.isArray(migrated.savedQuotes)) {
+          savedQuotes = migrated.savedQuotes;
         }
 
         el.spotUsdOz.value = state.spotUsdOz;
@@ -1181,17 +1519,34 @@
         let localData = null;
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
-          if (raw) localData = JSON.parse(raw);
+          if (raw) {
+            localData = JSON.parse(raw);
+          } else {
+            for (const legacyKey of LEGACY_STORAGE_KEYS) {
+              const legacyRaw = localStorage.getItem(legacyKey);
+              if (legacyRaw) {
+                localData = JSON.parse(legacyRaw);
+                break;
+              }
+            }
+          }
         } catch (err) {}
 
-        const idbData = await readFromIndexedDB();
+        let idbData = await readFromIndexedDB(STORAGE_KEY);
+        if (!idbData) {
+          for (const legacyKey of LEGACY_STORAGE_KEYS) {
+            idbData = await readFromIndexedDB(legacyKey);
+            if (idbData) break;
+          }
+        }
+
         const hashData = decodeHashState();
 
-        // Pick whichever source has the most recent timestamp
         const candidates = [localData, idbData, hashData].filter(Boolean);
         if (candidates.length > 0) {
           candidates.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
           applyPayloadToUI(candidates[0]);
+          persistAll();
         }
       }
 
@@ -1244,11 +1599,11 @@
           ? ((shopNetPerGram - karatBaseSarPerGram) / karatBaseSarPerGram) * 100
           : 0;
 
-        // Target Max Receipt for Good Price (just under goodMaxPct)
-        const targetGoodMultiplier = 1 + Math.max(0, goodMaxPct - 0.1) / 100;
+        // Target Max Receipt for Good Price (at goodMaxPct threshold)
+        const targetGoodMultiplier = 1 + goodMaxPct / 100;
         const targetGoodReceiptTotal = karatBaseSarPerGram * targetGoodMultiplier * vatFactor * shopWeight;
 
-        // Target Max Receipt for Fair Price (at fairMaxPct)
+        // Target Max Receipt for Fair Price (at fairMaxPct threshold)
         const targetFairMultiplier = 1 + fairMaxPct / 100;
         const targetFairReceiptTotal = karatBaseSarPerGram * targetFairMultiplier * vatFactor * shopWeight;
 
@@ -1267,13 +1622,18 @@
 
         // Render Step 1 & 2
         el.outGlobal24kSar.textContent = fmtSar(global24kSarPerGram);
-        el.lblKaratBench.textContent = `Selected ${karatObj.label} Base / g`;
+        el.lblKaratBench.textContent = `Selected ${karatObj.label} Base / g (Excl. VAT)`;
         el.outKaratBaseSar.textContent = fmtSar(karatBaseSarPerGram);
-        el.subKaratPurity.textContent = `${karatObj.pctText} purity (Excl. VAT)`;
+        el.subKaratPurity.textContent = `${karatObj.pctText} purity raw metal value`;
+        if (el.lblSummaryGood) el.lblSummaryGood.textContent = fmtNum(goodMaxPct, 1).replace(/\.0$/, "");
+        if (el.lblSummaryFair) el.lblSummaryFair.textContent = fmtNum(fairMaxPct, 1).replace(/\.0$/, "");
 
         el.outPlannedExclVat.textContent = fmtSar(plannedRawExclVat);
         el.outPlannedWeightSub.textContent = `${fmtNum(desiredGrams)}g pure metal`;
         el.outPlannedInclVat.textContent = fmtSar(plannedRawInclVat);
+
+        // Render Live Karat Target Guide Table
+        renderKaratTargetGuide(global24kSarPerGram, vatFactor, goodMaxPct, fairMaxPct, vatRate, desiredGrams);
 
         // Render Breakdown
         el.bdGrossPerGram.textContent = `${fmtNum(shopGrossPerGram)} SAR/g`;
@@ -1324,30 +1684,65 @@
         }
 
         el.negotiationBox.style.display = "flex";
+        const gLabel = fmtNum(goodMaxPct, 1).replace(/\.0$/, "");
+        const fLabel = fmtNum(fairMaxPct, 1).replace(/\.0$/, "");
 
         if (mfgRatePct < goodMaxPct) {
           el.verdictCard.classList.add("good");
-          el.verdictBadge.textContent = `GOOD PRICE (< ${fmtNum(goodMaxPct, 1)}%)`;
+          el.verdictBadge.textContent = `GOOD PRICE (< ${gLabel}%)`;
           el.verdictDesc.textContent = mfgRatePct < 0
             ? `Below raw gold spot (${fmtNum(mfgChargePerGram)} SAR/g). Verify karat stamp and scale weight.`
-            : `Strong Saudi market deal! Making fee is ${fmtNum(mfgRatePct, 2)}% (+${fmtNum(mfgChargePerGram)} SAR/g), below your ${fmtNum(goodMaxPct, 1)}% limit.`;
-          el.negotiationText.textContent = `Max Good Receipt (<${fmtNum(goodMaxPct, 1)}%):`;
+            : `Great deal! Manufacturing markup is ${fmtNum(mfgRatePct, 2)}% (+${fmtNum(mfgChargePerGram)} SAR/g), below your ${gLabel}% threshold.`;
+          el.negotiationText.textContent = `Max Good Receipt (${gLabel}%):`;
           el.negotiationTarget.textContent = fmtSar(targetGoodReceiptTotal);
         } else if (mfgRatePct <= fairMaxPct) {
           el.verdictCard.classList.add("fair");
-          el.verdictBadge.textContent = `FAIR PRICE (${fmtNum(goodMaxPct, 1)}% – ${fmtNum(fairMaxPct, 1)}%)`;
-          el.verdictDesc.textContent = `Standard retail rate (+${fmtNum(mfgChargePerGram)} SAR/g). Normal for detailed sets; you can negotiate toward the Good target.`;
+          el.verdictBadge.textContent = `FAIR PRICE (${gLabel}% – ${fLabel}%)`;
+          el.verdictDesc.textContent = `Reasonable retail markup of ${fmtNum(mfgRatePct, 2)}% (+${fmtNum(mfgChargePerGram)} SAR/g). You can negotiate toward the Good target.`;
           const savings = Math.max(0, shopTotalPrice - targetGoodReceiptTotal);
-          el.negotiationText.textContent = `Offer for Good (<${fmtNum(goodMaxPct, 1)}%):`;
+          el.negotiationText.textContent = `Offer for Good (${gLabel}%):`;
           el.negotiationTarget.textContent = `${fmtSar(targetGoodReceiptTotal)} (-${fmtNum(savings)} SAR)`;
         } else {
           el.verdictCard.classList.add("overpriced");
-          el.verdictBadge.textContent = `OVERPRICED (> ${fmtNum(fairMaxPct, 1)}%)`;
+          el.verdictBadge.textContent = `OVERPRICED (> ${fLabel}%)`;
           el.verdictDesc.textContent = `High making markup of ${fmtNum(mfgRatePct, 2)}% (+${fmtNum(mfgChargePerGram)} SAR/g) above global gold value.`;
-          const savings = Math.max(0, shopTotalPrice - targetFairReceiptTotal);
-          el.negotiationText.textContent = `Max Fair Price (${fmtNum(fairMaxPct, 1)}%):`;
-          el.negotiationTarget.textContent = `${fmtSar(targetFairReceiptTotal)} (Save ${fmtNum(savings)} SAR)`;
+          const savingsToGood = Math.max(0, shopTotalPrice - targetGoodReceiptTotal);
+          el.negotiationText.textContent = `Negotiate to Good (${gLabel}%):`;
+          el.negotiationTarget.textContent = `${fmtSar(targetGoodReceiptTotal)} (Save ${fmtNum(savingsToGood)} SAR)`;
         }
+      }
+
+      function renderKaratTargetGuide(global24kSarPerGram, vatFactor, goodMaxPct, fairMaxPct, vatRate, desiredGrams) {
+        if (!el.karatGuideBody) return;
+        const gLabel = fmtNum(goodMaxPct, 1).replace(/\.0$/, "");
+        const fLabel = fmtNum(fairMaxPct, 1).replace(/\.0$/, "");
+
+        el.lblGuideVat.textContent = `${fmtNum(vatRate, 1).replace(/\.0$/, "")}%`;
+        el.thGoodGuide.textContent = `Good (${gLabel}%)`;
+        el.thFairGuide.textContent = `Fair (${fLabel}%)`;
+        if (el.thTotalGuide) {
+          el.thTotalGuide.textContent = `${fmtNum(desiredGrams, 1).replace(/\.0$/, "")}g Good`;
+        }
+
+        const goodMult = 1 + goodMaxPct / 100;
+        const fairMult = 1 + fairMaxPct / 100;
+
+        el.karatGuideBody.innerHTML = KARATS.map((kObj) => {
+          const base = global24kSarPerGram * kObj.purity;
+          const goodIncl = base * goodMult * vatFactor;
+          const fairIncl = base * fairMult * vatFactor;
+          const goodTotal = goodIncl * desiredGrams;
+          const activeClass = kObj.k === state.selectedKarat ? "active-karat-row" : "";
+          return `
+            <tr class="${activeClass}">
+              <td>${kObj.label}</td>
+              <td>${fmtNum(base)}</td>
+              <td style="color:#065f46;">${fmtNum(goodIncl)}</td>
+              <td style="color:#92400e;">${fmtNum(fairIncl)}</td>
+              <td style="color:#0f172a; font-weight:700;">${fmtNum(goodTotal)}</td>
+            </tr>
+          `;
+        }).join("");
       }
 
       // ======================================================================
@@ -1365,7 +1760,6 @@
           return;
         }
 
-        // Find lowest manufacturing rate % for Best Deal badge
         let bestIdx = 0;
         savedQuotes.forEach((q, idx) => {
           if (q.mfgRatePct < savedQuotes[bestIdx].mfgRatePct) bestIdx = idx;
@@ -1465,6 +1859,19 @@
         });
       });
 
+      if (el.btnResetDefaults) {
+        el.btnResetDefaults.addEventListener("click", () => {
+          el.goodMaxPct.value = DEFAULTS.goodMaxPct;
+          el.fairMaxPct.value = DEFAULTS.fairMaxPct;
+          el.exchangeRate.value = DEFAULTS.exchangeRate;
+          el.vatRate.value = DEFAULTS.vatRate;
+          updateVatPillsUI();
+          recalculate(true);
+          renderSavedQuotes();
+          showToast("Defaults restored (5% / 10%)");
+        });
+      }
+
       el.karatSelector.addEventListener("click", (e) => {
         const btn = e.target.closest(".karat-btn");
         if (!btn) return;
@@ -1478,6 +1885,12 @@
         recalculate(true);
         showToast("Weight synced");
       });
+
+      if (el.btnRefreshSpot) {
+        el.btnRefreshSpot.addEventListener("click", () => {
+          fetchLiveGoldSpotOnce(true);
+        });
+      }
 
       el.btnSaveQuote.addEventListener("click", () => {
         if (!lastComputed || lastComputed.shopWeight <= 0 || lastComputed.shopTotalPrice <= 0) {
@@ -1514,7 +1927,6 @@
         showToast("Cleared all quotes");
       });
 
-      // Flush state immediately when iOS backgrounds/suspends the app
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "hidden") {
           persistAll();
@@ -1529,6 +1941,7 @@
       restoreAll().then(() => {
         recalculate(false);
         renderSavedQuotes();
+        fetchLiveGoldSpotOnce(false);
       });
     })();
   </script>
